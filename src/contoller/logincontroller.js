@@ -1,25 +1,17 @@
 let login = require("../Model/loginmodel");
 
 exports.adminlogin = (req, res) => {
-    let {name, pass, role } = req.body;
+  const { username, pass, role } = req.body;
 
-    let promise = login.adminData(name, pass,role);
+  if (!username || !pass || !role) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
 
-    promise.then((result) => {
-        res.json({ status: "valid", msg: result });
-    }).catch((err) => {
-        res.json({ status: "invalid", msg: err });
-    });
-};
-
-exports.userlogin = (req, res) => {
-  const { email, pass, role } = req.body;
-  login.userData(email, pass, role)
-    .then((result) => {
-      res.json({ status: "valid", msg: result });
+  login.adminlogin(username, pass, role)
+    .then((msg) => {
+      res.status(200).json({ status: "success", message: msg });
     })
     .catch((err) => {
-      res.json({ status: "invalid", msg: err });
+      res.status(401).json({ status: "fail", error: err });
     });
 };
-
