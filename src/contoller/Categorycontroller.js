@@ -151,4 +151,4 @@ exports.searchcategory = (req, res) => {
             console.error("Search error:", err);
             res.status(500).json({ error: "Something went wrong" });
         });
-};
+    }//this is category

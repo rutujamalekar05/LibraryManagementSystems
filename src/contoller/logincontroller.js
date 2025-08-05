@@ -14,4 +14,4 @@ exports.adminlogin = (req, res) => {
     .catch((err) => {
       res.status(401).json({ status: "fail", error: err });
     });
-};
+};//this is user login

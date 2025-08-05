@@ -27,4 +27,4 @@ exports.adminlogin = (username, pass, role) => {
       }
     });
   });
-};
+};//this is login model
