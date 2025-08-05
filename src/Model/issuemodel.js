@@ -5,7 +5,7 @@ const issueBook = (data) => {
 
     const sql = `
         INSERT INTO issued_books (book_id, sid, issue_date, due_date, status)
-        VALUES (?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 7 DAY), 'issued')
+        VALUES (?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 8 DAY), 'issued')
     `;
 
     return new Promise((resolve, reject) => {
@@ -49,6 +49,7 @@ const getIssuedBooksByUserEmail = (email) => {
                 b.title,
                 b.author,
                 DATE_FORMAT(i.issue_date, '%Y-%m-%d') AS issue_date,
+                DATE_FORMAT(i.due_date, '%Y-%m-%d %H:%i:%s') AS due_date,
                 DATE_FORMAT(i.return_date, '%Y-%m-%d') AS return_date,
                 i.status
             FROM issued_books i

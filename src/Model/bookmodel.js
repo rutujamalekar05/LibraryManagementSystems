@@ -153,7 +153,7 @@ exports.searchBook = (title, author, subject, offset, limit) => {
 };
 
 exports.searchBook = (title, author, subject, category, offset, limit) => {
-    const query = `
+    let query = `
         SELECT 
             b.book_id, 
             b.title, 
@@ -166,44 +166,78 @@ exports.searchBook = (title, author, subject, category, offset, limit) => {
             c.name AS category_name
         FROM book b
         JOIN category c ON b.category_id = c.category_id
-        WHERE b.title LIKE ? 
-            OR b.author LIKE ? 
-            OR b.subject LIKE ? 
-            OR c.name LIKE ?
-        LIMIT ? OFFSET ?
     `;
 
+    let conditions = [];
+    let params = [];
+
+    if (title) {
+        conditions.push("b.title LIKE ?");
+        params.push(`%${title}%`);
+    }
+    if (author) {
+        conditions.push("b.author LIKE ?");
+        params.push(`%${author}%`);
+    }
+    if (subject) {
+        conditions.push("b.subject LIKE ?");
+        params.push(`%${subject}%`);
+    }
+    if (category) {
+        conditions.push("c.name LIKE ?");
+        params.push(`%${category}%`);
+    }
+
+    if (conditions.length > 0) {
+        query += " WHERE " + conditions.join(" AND ");
+    }
+
+    query += " LIMIT ? OFFSET ?";
+    params.push(limit, offset);
+
     return new Promise((resolve, reject) => {
-        db.query(
-            query,
-            [`%${title}%`, `%${author}%`, `%${subject}%`, `%${category}%`, limit, offset],
-            (err, result) => {
-                if (err) reject(err);
-                else resolve(result);
-            }
-        );
+        db.query(query, params, (err, result) => {
+            if (err) reject(err);
+            else resolve(result);
+        });
     });
 };
-
 exports.searchBookCount = (title, author, subject, category) => {
-    const query = `
+    let query = `
         SELECT COUNT(*) AS count
         FROM book b
         JOIN category c ON b.category_id = c.category_id
-        WHERE b.title LIKE ? 
-            OR b.author LIKE ? 
-            OR b.subject LIKE ? 
-            OR c.name LIKE ?
     `;
 
+    let conditions = [];
+    let params = [];
+
+    if (title) {
+        conditions.push("b.title LIKE ?");
+        params.push(`%${title}%`);
+    }
+    if (author) {
+        conditions.push("b.author LIKE ?");
+        params.push(`%${author}%`);
+    }
+    if (subject) {
+        conditions.push("b.subject LIKE ?");
+        params.push(`%${subject}%`);
+    }
+    if (category) {
+        conditions.push("c.name LIKE ?");
+        params.push(`%${category}%`);
+    }
+
+    if (conditions.length > 0) {
+        query += " WHERE " + conditions.join(" AND ");
+    }
+
     return new Promise((resolve, reject) => {
-        db.query(
-            query,
-            [`%${title}%`, `%${author}%`, `%${subject}%`, `%${category}%`],
-            (err, result) => {
-                if (err) reject(err);
-                else resolve(result[0].count);
-            }
-        );
+        db.query(query, params, (err, result) => {
+            if (err) reject(err);
+            else resolve(result[0].count); // Only return the total count number
+        });
     });
 };
+
