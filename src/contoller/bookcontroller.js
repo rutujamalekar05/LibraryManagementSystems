@@ -116,10 +116,10 @@ exports.UpdateBook = (req, res) => {
 };
 
  exports.searchBook = (req, res) => {
-    const title = req.query.title || '';
-    const author = req.query.author || '';
-    const subject = req.query.subject || '';
-    const category = req.query.category || '';
+    const title = req.query.title || null;
+    const author = req.query.author || null;
+    const subject = req.query.subject || null;
+    const category = req.query.category || null;
 
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 5;
@@ -145,4 +145,3 @@ exports.UpdateBook = (req, res) => {
             res.status(500).json({ error: "Something went wrong" });
         });
 };
-
